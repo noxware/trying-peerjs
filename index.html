@@ -13,10 +13,10 @@
   </head>
   <body>
     <template x-data="app" x-if="true">
-      <div>
+      <div class="p-4">
         <p>Your ID: <code x-text="ownId || 'Loading...'"></code></p>
         <template x-if="!conn">
-          <form>
+          <form class="flex space-x-2">
             <label for="otherId">Other ID</label>
             <input
               type="text"
@@ -24,15 +24,21 @@
               id="otherId"
               x-model="otherId"
               placeholder="Other ID"
+              class="border border-black"
             />
-            <button type="button" @click.prevent="connect()" x-show="otherId">
+            <button
+              type="button"
+              @click.prevent="connect()"
+              :disabled="!otherId"
+              class="border border-black disabled:opacity-50"
+            >
               Connect
             </button>
           </form>
         </template>
         <template x-if="conn">
           <div>
-            <form>
+            <form class="flex space-x-2">
               <label for="message">Message</label>
               <input
                 type="text"
@@ -40,8 +46,14 @@
                 id="message"
                 x-model="message"
                 placeholder="Message"
+                class="border border-black"
               />
-              <button type="button" @click.prevent="send()" x-show="message">
+              <button
+                type="button"
+                @click.prevent="send()"
+                :disabled="!message"
+                class="border border-black disabled:opacity-50"
+              >
                 Send
               </button>
             </form>
