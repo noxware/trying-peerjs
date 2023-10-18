@@ -16,7 +16,7 @@
       <div class="p-4">
         <p>Your ID: <code x-text="ownId || 'Loading...'"></code></p>
         <template x-if="!conn">
-          <form class="flex space-x-2">
+          <form class="flex space-x-2" @submit.prevent="connect()">
             <label for="otherId">Other ID</label>
             <input
               type="text"
@@ -26,19 +26,17 @@
               placeholder="Other ID"
               class="border border-black"
             />
-            <button
-              type="button"
-              @click.prevent="connect()"
+            <input
+              type="submit"
               :disabled="!otherId"
               class="border border-black disabled:opacity-50"
-            >
-              Connect
-            </button>
+              value="Connect"
+            />
           </form>
         </template>
         <template x-if="conn">
           <div>
-            <form class="flex space-x-2">
+            <form class="flex space-x-2" @submit.prevent="send()">
               <label for="message">Message</label>
               <input
                 type="text"
@@ -48,14 +46,12 @@
                 placeholder="Message"
                 class="border border-black"
               />
-              <button
-                type="button"
-                @click.prevent="send()"
+              <input
+                type="submit"
                 :disabled="!message"
                 class="border border-black disabled:opacity-50"
-              >
-                Send
-              </button>
+                value="Send"
+              />
             </form>
             <ul>
               <template x-for="message in messages">
