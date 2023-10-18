@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trying PeerJS</title>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
+  </head>
+  <body>
+    <template x-data="app" x-if="true">
+      <div>
+        <p>Your ID: <code x-text="ownId || 'Loading...'"></code></p>
+        <template x-if="!conn">
+          <form>
+            <label for="otherId">Other ID</label>
+            <input
+              type="text"
+              name="otherId"
+              id="otherId"
+              x-model="otherId"
+              placeholder="Other ID"
+            />
+            <button type="button" @click.prevent="connect()" x-show="otherId">
+              Connect
+            </button>
+          </form>
+        </template>
+        <template x-if="conn">
+          <div>
+            <form>
+              <label for="message">Message</label>
+              <input
+                type="text"
+                name="message"
+                id="message"
+                x-model="message"
+                placeholder="Message"
+              />
+              <button type="button" @click.prevent="send()" x-show="message">
+                Send
+              </button>
+            </form>
+            <ul>
+              <template x-for="message in messages">
+                <li x-text="message"></li>
+              </template>
+            </ul>
+          </div>
+        </template>
+      </div>
+    </template>
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("app", () => ({
+          init() {
+            this.peer = new Peer();
+            this.peer.on("open", (id) => {
+              this.ownId = id;
+            });
+            this.peer.on("connection", (conn) => {
+              this.otherId = conn.peer;
+              this.conn = conn;
+              this.conn.on("data", (data) => {
+                this.messages.push(data);
+              });
+            });
+          },
+          connect() {
+            this.conn = this.peer.connect(this.otherId);
+            this.conn.on("data", (data) => {
+              this.messages.push(data);
+            });
+          },
+          send() {
+            this.conn.send(this.message);
+            this.messages.push(this.message);
+            this.message = "";
+          },
+          conn: null,
+          messages: [],
+          ownId: null,
+          peer: null,
+          otherId: "",
+          message: "",
+        }));
+      });
+    </script>
+  </body>
+</html>
